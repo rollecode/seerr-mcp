@@ -8,8 +8,6 @@ import ast
 import json
 import pathlib
 
-import pytest
-
 ROOT = pathlib.Path(__file__).parent.parent
 SPEC = ROOT / "openapi.json"
 TOOLS = ROOT / "src" / "seerr_mcp" / "tools.py"
@@ -79,9 +77,8 @@ def test_tool_names_are_unique():
     assert not duplicates, f"duplicate tool names: {duplicates}"
 
 
-@pytest.mark.parametrize("method", ["GET", "POST", "PUT", "DELETE"])
-def test_each_method_is_represented(method):
-    assert any(m == method for m, _ in generated_calls())
+def test_each_method_in_the_spec_is_represented():
+    assert {m for m, _ in spec_operations()} == {m for m, _ in generated_calls()}
 
 
 def test_generated_and_spec_agree_exactly():

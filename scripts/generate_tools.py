@@ -142,6 +142,9 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
     form_params = [p for p in params if p.get("in") == "formData"]
     has_body = bool(operation.get("requestBody"))
 
+    # Python needs every parameter without a default ahead of those with one,
+    # so required arguments are collected separately and joined first.
+    required_args: list[str] = []
     args: list[str] = []
     doc_args: list[str] = []
 
@@ -159,13 +162,13 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
     for param in path_params:
         kind = py_type(param.get("schema"))
         ident = claim(param["name"], "path")
-        args.append(f"{ident}: {kind}")
+        required_args.append(f"{ident}: {kind}")
         doc_args.append(
             f"        {ident}: {param.get('description') or 'Path parameter.'}"
         )
 
     if has_body:
-        args.append("body: dict")
+        required_args.append("body: dict")
         doc_args.append(
             "        body: Request payload. Read the matching GET or the "
             "/schema endpoint first to see the fields this resource expects."
@@ -176,10 +179,10 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
         kind = py_type(param.get("schema"))
         ident = claim(param["name"], "form")
         form_idents[param["name"]] = ident
-        required = param.get("required")
-        args.append(
-            f"{ident}: {kind}" if required else f"{ident}: {kind} | None = None"
-        )
+        if param.get("required"):
+            required_args.append(f"{ident}: {kind}")
+        else:
+            args.append(f"{ident}: {kind} | None = None")
         doc_args.append(
             f"        {ident}: {param.get('description') or 'Form field.'}"
         )
@@ -224,7 +227,7 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
         else "None"
     )
 
-    signature = ", ".join(args)
+    signature = ", ".join(required_args + args)
     doc = describe(operation, method, path)
 
     lines = [f"@mcp.tool(annotations={annotation})", f"def {name}({signature}) -> str:"]
