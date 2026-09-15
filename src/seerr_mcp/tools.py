@@ -1490,7 +1490,7 @@ def list_genres_tv(language: str | None = None) -> str:
 
 
 @mcp.tool(annotations=_READ)
-def list_issue(take: float | None = None, skip: float | None = None, sort: str | None = None, filter_: str | None = None, requested_by: float | None = None) -> str:
+def list_issue(take: float | None = None, skip: float | None = None, sort: str | None = None, filter: str | None = None, requested_by: float | None = None) -> str:
     """Get all issues.
 
     GET /api/v1/issue
@@ -1499,10 +1499,10 @@ def list_issue(take: float | None = None, skip: float | None = None, sort: str |
         take: Query parameter.
         skip: Query parameter.
         sort: Query parameter.
-        filter_: Query parameter.
+        filter: Query parameter.
         requested_by: Query parameter.
     """
-    return call("GET", "/api/v1/issue", query={"take": take, "skip": skip, "sort": sort, "filter": filter_, "requestedBy": requested_by}, body=None, form=None)
+    return call("GET", "/api/v1/issue", query={"take": take, "skip": skip, "sort": sort, "filter": filter, "requestedBy": requested_by}, body=None, form=None)
 
 
 @mcp.tool(annotations=_READ)
@@ -1524,7 +1524,7 @@ def list_languages() -> str:
 
 
 @mcp.tool(annotations=_READ)
-def list_media(take: float | None = None, skip: float | None = None, filter_: str | None = None, sort: str | None = None) -> str:
+def list_media(take: float | None = None, skip: float | None = None, filter: str | None = None, sort: str | None = None) -> str:
     """Get media.
 
     GET /api/v1/media
@@ -1532,10 +1532,10 @@ def list_media(take: float | None = None, skip: float | None = None, filter_: st
     Args:
         take: Query parameter.
         skip: Query parameter.
-        filter_: Query parameter.
+        filter: Query parameter.
         sort: Query parameter.
     """
-    return call("GET", "/api/v1/media", query={"take": take, "skip": skip, "filter": filter_, "sort": sort}, body=None, form=None)
+    return call("GET", "/api/v1/media", query={"take": take, "skip": skip, "filter": filter, "sort": sort}, body=None, form=None)
 
 
 @mcp.tool(annotations=_READ)
@@ -1548,7 +1548,7 @@ def list_regions() -> str:
 
 
 @mcp.tool(annotations=_READ)
-def list_request(take: float | None = None, skip: float | None = None, filter_: str | None = None, sort: str | None = None, requested_by: float | None = None) -> str:
+def list_request(take: float | None = None, skip: float | None = None, filter: str | None = None, sort: str | None = None, requested_by: float | None = None) -> str:
     """Get all requests.
 
     GET /api/v1/request
@@ -1556,11 +1556,11 @@ def list_request(take: float | None = None, skip: float | None = None, filter_: 
     Args:
         take: Query parameter.
         skip: Query parameter.
-        filter_: Query parameter.
+        filter: Query parameter.
         sort: Query parameter.
         requested_by: Query parameter.
     """
-    return call("GET", "/api/v1/request", query={"take": take, "skip": skip, "filter": filter_, "sort": sort, "requestedBy": requested_by}, body=None, form=None)
+    return call("GET", "/api/v1/request", query={"take": take, "skip": skip, "filter": filter, "sort": sort, "requestedBy": requested_by}, body=None, form=None)
 
 
 @mcp.tool(annotations=_READ)
@@ -1676,7 +1676,7 @@ def list_settings_jobs() -> str:
 
 
 @mcp.tool(annotations=_READ)
-def list_settings_logs(take: float | None = None, skip: float | None = None, filter_: str | None = None, search: str | None = None) -> str:
+def list_settings_logs(take: float | None = None, skip: float | None = None, filter: str | None = None, search: str | None = None) -> str:
     """Returns logs.
 
     GET /api/v1/settings/logs
@@ -1684,10 +1684,10 @@ def list_settings_logs(take: float | None = None, skip: float | None = None, fil
     Args:
         take: Query parameter.
         skip: Query parameter.
-        filter_: Query parameter.
+        filter: Query parameter.
         search: Query parameter.
     """
-    return call("GET", "/api/v1/settings/logs", query={"take": take, "skip": skip, "filter": filter_, "search": search}, body=None, form=None)
+    return call("GET", "/api/v1/settings/logs", query={"take": take, "skip": skip, "filter": filter, "search": search}, body=None, form=None)
 
 
 @mcp.tool(annotations=_READ)
