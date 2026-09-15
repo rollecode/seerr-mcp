@@ -137,6 +137,9 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
     params = operation.get("parameters") or []
     path_params = [p for p in params if p.get("in") == "path"]
     query_params = [p for p in params if p.get("in") == "query"]
+    # Some APIs take form fields rather than a JSON body; those become named
+    # arguments too, sent form-encoded.
+    form_params = [p for p in params if p.get("in") == "formData"]
     has_body = bool(operation.get("requestBody"))
 
     args: list[str] = []
@@ -166,6 +169,19 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
         doc_args.append(
             "        body: Request payload. Read the matching GET or the "
             "/schema endpoint first to see the fields this resource expects."
+        )
+
+    form_idents: dict[str, str] = {}
+    for param in form_params:
+        kind = py_type(param.get("schema"))
+        ident = claim(param["name"], "form")
+        form_idents[param["name"]] = ident
+        required = param.get("required")
+        args.append(
+            f"{ident}: {kind}" if required else f"{ident}: {kind} | None = None"
+        )
+        doc_args.append(
+            f"        {ident}: {param.get('description') or 'Form field.'}"
         )
 
     query_idents: dict[str, str] = {}
@@ -200,6 +216,13 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
         else "None"
     )
     body_expr = "body" if has_body else "None"
+    form_expr = (
+        "{"
+        + ", ".join(f'"{p["name"]}": {form_idents[p["name"]]}' for p in form_params)
+        + "}"
+        if form_params
+        else "None"
+    )
 
     signature = ", ".join(args)
     doc = describe(operation, method, path)
@@ -215,7 +238,7 @@ def render(name: str, method: str, path: str, operation: dict) -> str:
     lines.append('    """')
     lines.append(
         f'    return call("{method.upper()}", {url_expr}, '
-        f"query={query_expr}, body={body_expr})"
+        f"query={query_expr}, body={body_expr}, form={form_expr})"
     )
     return "\n".join(lines) + "\n"
 

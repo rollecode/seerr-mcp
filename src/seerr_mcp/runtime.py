@@ -127,13 +127,22 @@ def _detail(response: httpx.Response) -> str:
 
 
 def call(
-    method: str, path: str, query: dict | None = None, body: dict | None = None
+    method: str,
+    path: str,
+    query: dict | None = None,
+    body: dict | None = None,
+    form: dict | None = None,
 ) -> str:
     """Perform one API call and return its result as a JSON string."""
     try:
         params = {k: v for k, v in (query or {}).items() if v is not None}
+        fields = {k: v for k, v in (form or {}).items() if v is not None}
         response = _client().request(
-            method, path, params=params or None, json=body
+            method,
+            path,
+            params=params or None,
+            json=body,
+            data=fields or None,
         )
         response.raise_for_status()
 
